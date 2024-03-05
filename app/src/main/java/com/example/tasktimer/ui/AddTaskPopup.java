@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.tasktimer.R;
@@ -22,12 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AddTaskPopup#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AddTaskPopup extends DialogFragment {
 
     public AddTaskPopup() {
@@ -48,18 +45,22 @@ public class AddTaskPopup extends DialogFragment {
         EditText startTimeText = view.findViewById(R.id.startTimeEditText);
         EditText endTimeText = view.findViewById(R.id.endTimeEditText);
 
+        Button cancelButton = view.findViewById(R.id.cancelButton);
+        Button addButton = view.findViewById(R.id.addTaskButton);
+
+        cancelButton.setOnClickListener(v -> {
+            dismiss();
+        });
+
+        AtomicReference<Date> taskDate = new AtomicReference<>(null);
+        AtomicReference<Date> taskStartTime = new AtomicReference<>(null);
+        AtomicReference<Date> taskEndTime = new AtomicReference<>(null);
+
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
 
         dateText.setOnClickListener(v -> {
-            Date curDate = new Date();
-            try {
-                Calendar c = Calendar.getInstance();
-                c.setTime(Objects.requireNonNull(formatter.parse(dateText.getText().toString())));
-                c.add(Calendar.DAY_OF_MONTH, 1);
-                curDate = c.getTime();
-            } catch (ParseException e) {
-            }
+            Date curDate = taskDate.get() == null ? new Date() : taskDate.get();
 
             Calendar c = Calendar.getInstance();
             c.setTime(curDate);
@@ -76,19 +77,13 @@ public class AddTaskPopup extends DialogFragment {
             picker.show(getParentFragmentManager(), null);
 
             picker.addOnPositiveButtonClickListener(o -> {
-                Date date = new Date(o);
-                dateText.setText(formatter.format(date));
+                taskDate.set(new Date(o));
+                dateText.setText(formatter.format(taskDate.get()));
             });
         });
 
-        View.OnClickListener timePickerListener = v -> {
-            EditText edit = (EditText)v;
-            Date curTime = new Date();
-
-            try {
-                curTime = timeFormatter.parse(edit.getText().toString());
-            } catch (ParseException e) {
-            }
+        startTimeText.setOnClickListener(v -> {
+            Date curTime = taskStartTime.get() == null ? new Date() : taskStartTime.get();
 
             Calendar c = Calendar.getInstance();
             c.setTime(curTime);
@@ -107,15 +102,49 @@ public class AddTaskPopup extends DialogFragment {
                 int minute = picker.getMinute();
                 int hour = picker.getHour();
 
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, hour);
+                calendar.set(Calendar.MINUTE, minute);
+                taskStartTime.set(calendar.getTime());
+
                 String minText = String.format("%2s", minute).replace(' ', '0');
                 String hourText = String.format("%2s", hour).replace(' ', '0');
 
-                edit.setText(hourText + ":" + minText);
+                startTimeText.setText(hourText + ":" + minText);
             });
-        };
+        });
 
-        startTimeText.setOnClickListener(timePickerListener);
-        endTimeText.setOnClickListener(timePickerListener);
+        endTimeText.setOnClickListener(v -> {
+            Date curTime = taskEndTime.get() == null ? new Date() : taskEndTime.get();
+
+            Calendar c = Calendar.getInstance();
+            c.setTime(curTime);
+
+            MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                    .setTimeFormat(TimeFormat.CLOCK_24H)
+                    .setHour(c.get(Calendar.HOUR_OF_DAY))
+                    .setMinute(c.get(Calendar.MINUTE))
+                    .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+                    .setTitleText("Select Appointment time")
+                    .build();
+
+            picker.show(getParentFragmentManager(), null);
+
+            picker.addOnPositiveButtonClickListener(o -> {
+                int minute = picker.getMinute();
+                int hour = picker.getHour();
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, hour);
+                calendar.set(Calendar.MINUTE, minute);
+                taskEndTime.set(calendar.getTime());
+
+                String minText = String.format("%2s", minute).replace(' ', '0');
+                String hourText = String.format("%2s", hour).replace(' ', '0');
+
+                endTimeText.setText(hourText + ":" + minText);
+            });
+        });
 
 
         // Inflate the layout for this fragment
