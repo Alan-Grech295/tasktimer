@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.AddTaskPopup"
-    android:padding="10dp">
+    android:padding="20dp">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -25,7 +25,7 @@
             android:id="@+id/taskNameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
+            android:ems="8"
             android:hint="Enter task name"
             android:inputType="text"
             android:textSize="16sp" />
@@ -52,7 +52,7 @@
             android:id="@+id/dateEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
+            android:ems="8"
             android:hint="Tap to select a date"
             android:inputType="date"
             android:clickable="false"
@@ -82,7 +82,7 @@
             android:id="@+id/startTimeEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
+            android:ems="8"
             android:hint="Tap to pick a time"
             android:inputType="time"
             android:clickable="false"
@@ -113,7 +113,7 @@
             android:id="@+id/endTimeEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
+            android:ems="8"
             android:hint="Tap to pick a time"
             android:inputType="time"
             android:clickable="false"

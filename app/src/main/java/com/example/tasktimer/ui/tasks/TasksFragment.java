@@ -14,11 +14,15 @@ import android.widget.PopupWindow;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tasktimer.MainActivity;
 import com.example.tasktimer.R;
 import com.example.tasktimer.adapters.Task_RecyclerViewAdapter;
+import com.example.tasktimer.database.viewmodels.TaskViewModel;
 import com.example.tasktimer.databinding.FragmentTasksBinding;
 import com.example.tasktimer.model.Task;
 import com.example.tasktimer.ui.AddTaskPopup;
@@ -31,15 +35,6 @@ public class TasksFragment extends Fragment {
 
     private FragmentTasksBinding binding;
 
-    private ArrayList<Task> tasks = new ArrayList<Task>() {
-        {
-            add(new Task("Test", new Date(), new Date()));
-            add(new Task("Test", new Date(), new Date()));
-            add(new Task("Test", new Date(), new Date()));
-            add(new Task("Test", new Date(), new Date()));
-        }
-    };
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentTasksBinding.inflate(inflater, container, false);
@@ -47,17 +42,17 @@ public class TasksFragment extends Fragment {
 
         RecyclerView taskList = root.findViewById(R.id.taskList);
 
-        Task_RecyclerViewAdapter adapter = new Task_RecyclerViewAdapter(getContext(), tasks);
+        TaskViewModel taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+        Task_RecyclerViewAdapter adapter = new Task_RecyclerViewAdapter(getContext(), taskViewModel);
         taskList.setAdapter(adapter);
         taskList.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        taskViewModel.getAllTasks().observe(getViewLifecycleOwner(), adapter::setTasks);
+
         FloatingActionButton addTaskFAB = root.findViewById(R.id.addTaskButton);
-        addTaskFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogFragment popup = new AddTaskPopup();
-                popup.show(getParentFragmentManager(), "Add Task");
-            }
+        addTaskFAB.setOnClickListener(v -> {
+            DialogFragment popup = new AddTaskPopup();
+            popup.show(getParentFragmentManager(), "Add Task");
         });
 
         return root;

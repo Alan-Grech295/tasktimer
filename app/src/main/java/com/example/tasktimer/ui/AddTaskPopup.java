@@ -4,14 +4,19 @@ import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.tasktimer.MainActivity;
 import com.example.tasktimer.R;
+import com.example.tasktimer.database.viewmodels.TaskViewModel;
+import com.example.tasktimer.model.Task;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -27,6 +32,15 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class AddTaskPopup extends DialogFragment {
 
+    AtomicReference<Date> taskDate = new AtomicReference<>(null);
+    AtomicReference<Pair<Integer, Integer>> taskStartTime = new AtomicReference<>(null);
+    AtomicReference<Pair<Integer, Integer>> taskEndTime = new AtomicReference<>(null);
+
+    EditText taskTitleText;
+    EditText dateText;
+    EditText startTimeText;
+    EditText endTimeText;
+
     public AddTaskPopup() {
         // Required empty public constructor
     }
@@ -40,10 +54,10 @@ public class AddTaskPopup extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_task_popup, container, false);
-        EditText taskTitleText = view.findViewById(R.id.taskNameEditText);
-        EditText dateText = view.findViewById(R.id.dateEditText);
-        EditText startTimeText = view.findViewById(R.id.startTimeEditText);
-        EditText endTimeText = view.findViewById(R.id.endTimeEditText);
+        taskTitleText = view.findViewById(R.id.taskNameEditText);
+        dateText = view.findViewById(R.id.dateEditText);
+        startTimeText = view.findViewById(R.id.startTimeEditText);
+        endTimeText = view.findViewById(R.id.endTimeEditText);
 
         Button cancelButton = view.findViewById(R.id.cancelButton);
         Button addButton = view.findViewById(R.id.addTaskButton);
@@ -52,9 +66,7 @@ public class AddTaskPopup extends DialogFragment {
             dismiss();
         });
 
-        AtomicReference<Date> taskDate = new AtomicReference<>(null);
-        AtomicReference<Date> taskStartTime = new AtomicReference<>(null);
-        AtomicReference<Date> taskEndTime = new AtomicReference<>(null);
+        addButton.setOnClickListener(this::addGoal);
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
@@ -79,21 +91,19 @@ public class AddTaskPopup extends DialogFragment {
             picker.addOnPositiveButtonClickListener(o -> {
                 taskDate.set(new Date(o));
                 dateText.setText(formatter.format(taskDate.get()));
+                dateText.setError(null);
             });
         });
 
         startTimeText.setOnClickListener(v -> {
-            Date curTime = taskStartTime.get() == null ? new Date() : taskStartTime.get();
-
-            Calendar c = Calendar.getInstance();
-            c.setTime(curTime);
+            Pair<Integer, Integer> curTime = taskStartTime.get() == null ? dateToTime(new Date()) : taskStartTime.get();
 
             MaterialTimePicker picker = new MaterialTimePicker.Builder()
                     .setTimeFormat(TimeFormat.CLOCK_24H)
-                    .setHour(c.get(Calendar.HOUR_OF_DAY))
-                    .setMinute(c.get(Calendar.MINUTE))
+                    .setHour(curTime.first)
+                    .setMinute(curTime.second)
                     .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
-                    .setTitleText("Select Appointment time")
+                    .setTitleText("Select Task Start time")
                     .build();
 
             picker.show(getParentFragmentManager(), null);
@@ -102,30 +112,25 @@ public class AddTaskPopup extends DialogFragment {
                 int minute = picker.getMinute();
                 int hour = picker.getHour();
 
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                calendar.set(Calendar.MINUTE, minute);
-                taskStartTime.set(calendar.getTime());
+                taskStartTime.set(new Pair<>(hour, minute));
 
                 String minText = String.format("%2s", minute).replace(' ', '0');
                 String hourText = String.format("%2s", hour).replace(' ', '0');
 
                 startTimeText.setText(hourText + ":" + minText);
+                startTimeText.setError(null);
             });
         });
 
         endTimeText.setOnClickListener(v -> {
-            Date curTime = taskEndTime.get() == null ? new Date() : taskEndTime.get();
-
-            Calendar c = Calendar.getInstance();
-            c.setTime(curTime);
+            Pair<Integer, Integer> curTime = taskEndTime.get() == null ? dateToTime(new Date()) : taskEndTime.get();
 
             MaterialTimePicker picker = new MaterialTimePicker.Builder()
                     .setTimeFormat(TimeFormat.CLOCK_24H)
-                    .setHour(c.get(Calendar.HOUR_OF_DAY))
-                    .setMinute(c.get(Calendar.MINUTE))
+                    .setHour(curTime.first)
+                    .setMinute(curTime.second)
                     .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
-                    .setTitleText("Select Appointment time")
+                    .setTitleText("Select Task End time")
                     .build();
 
             picker.show(getParentFragmentManager(), null);
@@ -134,21 +139,72 @@ public class AddTaskPopup extends DialogFragment {
                 int minute = picker.getMinute();
                 int hour = picker.getHour();
 
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                calendar.set(Calendar.MINUTE, minute);
-                taskEndTime.set(calendar.getTime());
+                taskEndTime.set(new Pair<>(hour, minute));
 
                 String minText = String.format("%2s", minute).replace(' ', '0');
                 String hourText = String.format("%2s", hour).replace(' ', '0');
 
                 endTimeText.setText(hourText + ":" + minText);
+                endTimeText.setError(null);
             });
         });
 
 
         // Inflate the layout for this fragment
         return view;
+    }
+
+    private Pair<Integer, Integer> dateToTime(Date date){
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+
+        return new Pair<>(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
+    }
+
+    private void addGoal(View view){
+        boolean foundError = false;
+        //Should use isBlank
+        if (taskTitleText.getText().toString().replaceAll(" \t", "").isEmpty()) {
+            taskTitleText.setError("Task name cannot be empty");
+            foundError = true;
+        }
+
+        if (dateText.getText().toString().replaceAll(" \t", "").isEmpty()) {
+            dateText.setError("You must pick a date for the task");
+            foundError = true;
+        }
+
+        if (startTimeText.getText().toString().replaceAll(" \t", "").isEmpty()) {
+            startTimeText.setError("You must pick a starting time for the task");
+            foundError = true;
+        }
+
+        if (endTimeText.getText().toString().replaceAll(" \t", "").isEmpty()) {
+            endTimeText.setError("You must pick an end time for the task");
+            foundError = true;
+        }
+
+        if (foundError)
+            return;
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(taskDate.get());
+        c.set(Calendar.HOUR_OF_DAY, taskStartTime.get().first);
+        c.set(Calendar.MINUTE, taskStartTime.get().second);
+
+        Date startTime = c.getTime();
+
+        c.set(Calendar.HOUR_OF_DAY, taskEndTime.get().first);
+        c.set(Calendar.MINUTE, taskEndTime.get().second);
+
+        Date endTime = c.getTime();
+
+        Task task = new Task(taskTitleText.getText().toString(), startTime, endTime);
+
+        TaskViewModel taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+        taskViewModel.insert(task);
+
+        dismiss();
     }
 
 //    private void
