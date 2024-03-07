@@ -47,7 +47,7 @@ public class TasksFragment extends Fragment {
         taskList.setAdapter(adapter);
         taskList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        taskViewModel.getAllTasks().observe(getViewLifecycleOwner(), adapter::setTasks);
+        taskViewModel.getTasksByDate(new Date()).observe(getViewLifecycleOwner(), adapter::setTasks);
 
         FloatingActionButton addTaskFAB = root.findViewById(R.id.addTaskButton);
         addTaskFAB.setOnClickListener(v -> {

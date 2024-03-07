@@ -10,12 +10,16 @@ import androidx.room.Update;
 
 import com.example.tasktimer.model.Task;
 
+import java.util.Date;
 import java.util.List;
 
 @Dao
 public interface TaskDao {
-    @Query("SELECT * FROM " + Task.TABLE_NAME)
+    @Query("SELECT * FROM " + Task.TABLE_NAME + " ORDER BY start")
     LiveData<List<Task>> getAll();
+
+    @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE start BETWEEN :start AND :end ORDER BY start")
+    LiveData<List<Task>> getTasksBetweenDate(Date start, Date end);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Task task);

@@ -164,23 +164,32 @@ public class AddTaskPopup extends DialogFragment {
     private void addGoal(View view){
         boolean foundError = false;
         //Should use isBlank
-        if (taskTitleText.getText().toString().replaceAll(" \t", "").isEmpty()) {
+        if (taskTitleText.getText().toString().trim().isEmpty()) {
             taskTitleText.setError("Task name cannot be empty");
             foundError = true;
         }
 
-        if (dateText.getText().toString().replaceAll(" \t", "").isEmpty()) {
+        if (dateText.getText().toString().trim().isEmpty()) {
             dateText.setError("You must pick a date for the task");
             foundError = true;
         }
 
-        if (startTimeText.getText().toString().replaceAll(" \t", "").isEmpty()) {
+        int startTimeMins = taskStartTime.get() == null ? -1 : taskStartTime.get().first * 60 + taskStartTime.get().second;
+        int endTimeMins = taskEndTime.get() == null ? 60 * 24 + 1 : taskEndTime.get().first * 60 + taskEndTime.get().second;
+
+        if (startTimeText.getText().toString().trim().isEmpty()) {
             startTimeText.setError("You must pick a starting time for the task");
+            foundError = true;
+        } else if (startTimeMins >= endTimeMins){
+            startTimeText.setError("You must pick a starting time earlier than the end time");
             foundError = true;
         }
 
-        if (endTimeText.getText().toString().replaceAll(" \t", "").isEmpty()) {
+        if (endTimeText.getText().toString().trim().isEmpty()) {
             endTimeText.setError("You must pick an end time for the task");
+            foundError = true;
+        } else if (startTimeMins >= endTimeMins){
+            endTimeText.setError("You must pick an end time later than the start time");
             foundError = true;
         }
 

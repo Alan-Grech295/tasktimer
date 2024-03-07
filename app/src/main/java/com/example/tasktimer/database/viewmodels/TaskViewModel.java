@@ -10,6 +10,8 @@ import com.example.tasktimer.database.AppRoomDatabase;
 import com.example.tasktimer.database.daos.TaskDao;
 import com.example.tasktimer.model.Task;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class TaskViewModel extends AndroidViewModel {
@@ -25,6 +27,23 @@ public class TaskViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Task>> getAllTasks() { return taskLiveData; }
+
+    public LiveData<List<Task>> getTasksByDate(Date date){
+        Calendar c = Calendar.getInstance();
+
+        c.setTime(date);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+
+        Date startDate = c.getTime();
+
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+
+        Date endDate = c.getTime();
+
+        return taskDao.getTasksBetweenDate(startDate, endDate);
+    }
 
     public void insert(Task task){
         AppRoomDatabase.databaseWriteExecutor.execute(() -> {

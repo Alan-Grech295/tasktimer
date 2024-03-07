@@ -1,10 +1,12 @@
 package com.example.tasktimer.adapters;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -51,6 +53,11 @@ public class Task_RecyclerViewAdapter extends RecyclerView.Adapter<Task_Recycler
         DateFormat timeFormat = new SimpleDateFormat(TIME_FORMAT);
 
         holder.taskTitle.setText(curTask.getTaskName());
+        if(curTask.isCompleted())
+            holder.taskTitle.setPaintFlags(holder.taskTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        else
+            holder.taskTitle.setPaintFlags(holder.taskTitle.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+
         holder.dateText.setText(dateFormat.format(curTask.getStart()));
         String time = timeFormat.format(curTask.getStart()) + " - " + timeFormat.format(curTask.getEnd());
         holder.timeText.setText(time);
@@ -58,6 +65,9 @@ public class Task_RecyclerViewAdapter extends RecyclerView.Adapter<Task_Recycler
         holder.completedCheckbox.setOnClickListener(view -> {
             curTask.setCompleted(holder.completedCheckbox.isChecked());
             taskViewModel.update(curTask);
+        });
+        holder.deleteButton.setOnClickListener(v -> {
+            taskViewModel.delete(curTask);
         });
     }
 
@@ -77,6 +87,7 @@ public class Task_RecyclerViewAdapter extends RecyclerView.Adapter<Task_Recycler
         TextView dateText;
         TextView timeText;
         CheckBox completedCheckbox;
+        ImageButton deleteButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -85,6 +96,7 @@ public class Task_RecyclerViewAdapter extends RecyclerView.Adapter<Task_Recycler
             dateText = itemView.findViewById(R.id.dateText);
             timeText = itemView.findViewById(R.id.timeText);
             completedCheckbox = itemView.findViewById(R.id.checkBox);
+            deleteButton = itemView.findViewById(R.id.deleteButton);
         }
     }
 }
