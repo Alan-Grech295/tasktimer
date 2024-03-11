@@ -45,6 +45,26 @@ public class TaskViewModel extends AndroidViewModel {
         return taskDao.getTasksBetweenDate(startDate, endDate);
     }
 
+    public LiveData<List<Task>> getTasksBeforeDate(Date date){
+        Calendar c = Calendar.getInstance();
+
+        c.setTime(date);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+
+        return taskDao.getTasksBeforeDate(c.getTime());
+    }
+
+    public LiveData<List<Task>> getTasksAfterDate(Date date){
+        Calendar c = Calendar.getInstance();
+
+        c.setTime(date);
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+
+        return taskDao.getTasksAfterDate(c.getTime());
+    }
+
     public void insert(Task task){
         AppRoomDatabase.databaseWriteExecutor.execute(() -> {
             taskDao.insert(task);
