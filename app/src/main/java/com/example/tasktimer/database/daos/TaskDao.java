@@ -23,6 +23,11 @@ public interface TaskDao {
 
     @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE start >= :date ORDER BY start LIMIT 1")
     LiveData<Task> getNextTask(Date date);
+    @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE start < :date ORDER BY start")
+    LiveData<List<Task>> getTasksBeforeDate(Date date);
+
+    @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE start > :date ORDER BY start")
+    LiveData<List<Task>> getTasksAfterDate(Date date);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Task task);

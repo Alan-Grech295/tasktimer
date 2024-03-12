@@ -49,8 +49,28 @@ public class TaskViewModel extends AndroidViewModel {
         return taskDao.getNextTask(date);
     }
 
-    public LiveData<Task> getTaskAfter(Task task){
+    public LiveData<Task> getTaskAfter(Task task) {
         return getNextTask(task.getEnd());
+    }
+
+    public LiveData<List<Task>> getTasksBeforeDate(Date date){
+        Calendar c = Calendar.getInstance();
+
+        c.setTime(date);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+
+        return taskDao.getTasksBeforeDate(c.getTime());
+    }
+
+    public LiveData<List<Task>> getTasksAfterDate(Date date){
+        Calendar c = Calendar.getInstance();
+
+        c.setTime(date);
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+
+        return taskDao.getTasksAfterDate(c.getTime());
     }
 
     public void insert(Task task){

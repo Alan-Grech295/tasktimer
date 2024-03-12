@@ -6,16 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".ui.tasks.TasksFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/taskList"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/pastTasksLayout"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/curTasksLayout"-->
+<!--        tools:layout_editor_absoluteX="0dp" />-->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addTaskButton"
@@ -31,4 +27,109 @@
         android:src="@drawable/baseline_add_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/pastTasksLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Past Tasks"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="@+id/dropdownIcon1"
+                app:layout_constraintStart_toEndOf="@+id/dropdownIcon1"
+                app:layout_constraintTop_toTopOf="@+id/dropdownIcon1" />
+
+            <ImageButton
+                android:id="@+id/dropdownIcon1"
+                android:layout_width="24dp"
+                android:layout_height="27dp"
+                android:background="@drawable/ic_angle_down"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/pastTasksList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight = "1" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/curTasksLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Current Tasks"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/dropdownIcon2"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/dropdownIcon2"
+                android:layout_width="24dp"
+                android:layout_height="27dp"
+                android:background="@drawable/ic_angle_down"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/curTasksList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight = "1" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/futureTasksLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Future Tasks"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/dropdownIcon3"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/dropdownIcon3"
+                android:layout_width="24dp"
+                android:layout_height="27dp"
+                android:background="@drawable/ic_angle_down"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/futureTasksList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight = "1" />
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
