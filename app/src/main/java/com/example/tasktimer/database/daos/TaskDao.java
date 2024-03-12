@@ -21,6 +21,9 @@ public interface TaskDao {
     @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE start BETWEEN :start AND :end ORDER BY start")
     LiveData<List<Task>> getTasksBetweenDate(Date start, Date end);
 
+    @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE start >= :date ORDER BY start LIMIT 1")
+    LiveData<Task> getNextTask(Date date);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Task task);
 

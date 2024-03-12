@@ -45,6 +45,14 @@ public class TaskViewModel extends AndroidViewModel {
         return taskDao.getTasksBetweenDate(startDate, endDate);
     }
 
+    public LiveData<Task> getNextTask(Date date){
+        return taskDao.getNextTask(date);
+    }
+
+    public LiveData<Task> getTaskAfter(Task task){
+        return getNextTask(task.getEnd());
+    }
+
     public void insert(Task task){
         AppRoomDatabase.databaseWriteExecutor.execute(() -> {
             taskDao.insert(task);
