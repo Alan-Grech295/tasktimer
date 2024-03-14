@@ -1,5 +1,8 @@
 package com.example.tasktimer.ui;
 
+import static com.example.tasktimer.utils.Constants.DATE_FORMAT;
+import static com.example.tasktimer.utils.Constants.TIME_FORMAT;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
@@ -68,8 +71,8 @@ public class AddTaskPopup extends DialogFragment {
 
         addButton.setOnClickListener(this::addGoal);
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
+        SimpleDateFormat timeFormatter = new SimpleDateFormat(TIME_FORMAT);
 
         dateText.setOnClickListener(v -> {
             Date curDate = taskDate.get() == null ? new Date() : taskDate.get();

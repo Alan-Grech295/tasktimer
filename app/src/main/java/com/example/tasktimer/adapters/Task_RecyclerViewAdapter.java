@@ -1,5 +1,8 @@
 package com.example.tasktimer.adapters;
 
+import static com.example.tasktimer.utils.Constants.DATE_FORMAT;
+import static com.example.tasktimer.utils.Constants.TIME_FORMAT;
+
 import android.content.Context;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
@@ -27,9 +30,6 @@ public class Task_RecyclerViewAdapter extends RecyclerView.Adapter<Task_Recycler
     private Context context;
 
     private TaskViewModel taskViewModel;
-
-    final String DATE_FORMAT = "dd/MM/yyyy";
-    final String TIME_FORMAT = "HH:mm";
 
     public Task_RecyclerViewAdapter(Context context, TaskViewModel taskViewModel){
         this.context = context;

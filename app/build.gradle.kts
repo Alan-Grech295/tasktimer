@@ -47,10 +47,15 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation("com.google.android.material:material:1.2.0")
+    implementation("com.google.android.material:material:1.11.0")
     
     val room_version = "2.6.1"
-    
+
+    implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
+    implementation("androidx.room:room-rxjava3:$room_version")
+    implementation("androidx.room:room-guava:$room_version")
+    implementation("io.reactivex.rxjava3:rxjava:3.1.5")
+    implementation("com.google.guava:guava:33.1.0-android")
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
 }

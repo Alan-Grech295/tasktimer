@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import com.example.tasktimer.database.AppRoomDatabase;
 import com.example.tasktimer.database.daos.TaskDao;
 import com.example.tasktimer.model.Task;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -45,12 +46,16 @@ public class TaskViewModel extends AndroidViewModel {
         return taskDao.getTasksBetweenDate(startDate, endDate);
     }
 
-    public LiveData<Task> getNextTask(Date date){
-        return taskDao.getNextTask(date);
+    public ListenableFuture<Task> getCurrentTask(Date date){
+        return taskDao.getNextOrCurrentTask(date);
     }
 
-    public LiveData<Task> getTaskAfter(Task task) {
-        return getNextTask(task.getEnd());
+    public ListenableFuture<Task> getTaskAfter(Task task) {
+        return taskDao.getNextTask(task.getEnd());
+    }
+
+    public ListenableFuture<Task> getTaskBefore(Task task) {
+        return taskDao.getPreviousTask(task.getStart());
     }
 
     public LiveData<List<Task>> getTasksBeforeDate(Date date){
