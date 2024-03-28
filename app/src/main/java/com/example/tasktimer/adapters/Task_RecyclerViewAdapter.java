@@ -3,7 +3,9 @@ package com.example.tasktimer.adapters;
 import static com.example.tasktimer.utils.Constants.DATE_FORMAT;
 import static com.example.tasktimer.utils.Constants.TIME_FORMAT;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,7 +69,21 @@ public class Task_RecyclerViewAdapter extends RecyclerView.Adapter<Task_Recycler
             taskViewModel.update(curTask);
         });
         holder.deleteButton.setOnClickListener(v -> {
-            taskViewModel.delete(curTask);
+            DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        taskViewModel.delete(curTask);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage("Are you sure you want to delete the task '" + curTask.getTaskName() + "'?")
+                            .setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener).show();
         });
     }
 

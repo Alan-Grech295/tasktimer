@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
@@ -45,14 +46,14 @@ public class TasksFragment extends Fragment {
     RecyclerView curTasksList;
     RecyclerView futureTasksList;
 
-    ImageButton dropdown1;
-    ImageButton dropdown2;
-    ImageButton dropdown3;
+    ImageView dropdown1;
+    ImageView dropdown2;
+    ImageView dropdown3;
 
     private enum ListType { PAST, CURRENT, FUTURE }
     private int[] heights = new int[3];
 
-    final int ANIM_DURATION = 300;
+    final int ANIM_DURATION = 200;
 
     int height = 0;
 
@@ -98,17 +99,19 @@ public class TasksFragment extends Fragment {
         dropdown2 = root.findViewById(R.id.dropdownIcon2);
         dropdown3 = root.findViewById(R.id.dropdownIcon3);
 
-        dropdown1.setOnClickListener(v -> {
+        root.findViewById(R.id.pastTasksLayout).setOnClickListener(v -> {
             showTaskList(ListType.PAST, height);
         });
 
-        dropdown2.setOnClickListener(v -> {
+        root.findViewById(R.id.curTasksLayout).setOnClickListener(v -> {
             showTaskList(ListType.CURRENT, height);
         });
 
-        dropdown3.setOnClickListener(v -> {
+        root.findViewById(R.id.futureTasksLayout).setOnClickListener(v -> {
             showTaskList(ListType.FUTURE, height);
         });
+
+        showTaskList(ListType.CURRENT, height);
 
         FloatingActionButton addTaskFAB = root.findViewById(R.id.addTaskButton);
         addTaskFAB.setOnClickListener(v -> {

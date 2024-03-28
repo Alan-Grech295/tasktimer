@@ -46,13 +46,33 @@ public class TaskViewModel extends AndroidViewModel {
         return taskDao.getTasksBetweenDate(startDate, endDate);
     }
 
-    public ListenableFuture<Task> getCurrentTask(Date date){
-        return taskDao.getNextOrCurrentTask(date);
+    public LiveData<Task> getCurrentTask(Date date){
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+
+        Date endOfDay = c.getTime();
+
+        return taskDao.getCurrentOrPrevTask(date, endOfDay);
     }
 
-    public ListenableFuture<Task> getTaskAfter(Task task) {
-        return taskDao.getNextTask(task.getEnd());
+    public LiveData<Task> getNextTask(Date date){
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+
+        Date endOfDay = c.getTime();
+
+        return taskDao.getNextTask(date, endOfDay);
     }
+
+//    public LiveData<Task> getNextTask(Date date){
+//        return taskDao.getNextTask(date);
+//    }
+//
+//    public ListenableFuture<Task> getTaskAfter(Task task) {
+//        return taskDao.getNextTask(task.getEnd());
+//    }
 
     public ListenableFuture<Task> getTaskBefore(Task task) {
         return taskDao.getPreviousTask(task.getStart());

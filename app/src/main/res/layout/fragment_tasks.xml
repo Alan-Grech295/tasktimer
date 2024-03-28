@@ -51,7 +51,7 @@
                 app:layout_constraintStart_toEndOf="@+id/dropdownIcon1"
                 app:layout_constraintTop_toTopOf="@+id/dropdownIcon1" />
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/dropdownIcon1"
                 android:layout_width="24dp"
                 android:layout_height="27dp"
@@ -83,7 +83,7 @@
                 app:layout_constraintStart_toEndOf="@+id/dropdownIcon2"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/dropdownIcon2"
                 android:layout_width="24dp"
                 android:layout_height="27dp"
@@ -114,7 +114,7 @@
                 app:layout_constraintStart_toEndOf="@+id/dropdownIcon3"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/dropdownIcon3"
                 android:layout_width="24dp"
                 android:layout_height="27dp"
