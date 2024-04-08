@@ -66,6 +66,16 @@ public class TaskViewModel extends AndroidViewModel {
         return taskDao.getNextTask(date, endOfDay);
     }
 
+    public LiveData<Task> getTaskAfter(Task task){
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+
+        Date endOfDay = c.getTime();
+
+        return taskDao.getNextTask(task.getEnd(), endOfDay);
+    }
+
 //    public LiveData<Task> getNextTask(Date date){
 //        return taskDao.getNextTask(date);
 //    }

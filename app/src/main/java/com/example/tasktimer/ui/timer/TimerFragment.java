@@ -17,6 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -26,6 +27,7 @@ import com.example.tasktimer.database.viewmodels.TaskViewModel;
 import com.example.tasktimer.databinding.FragmentTimerBinding;
 import com.example.tasktimer.model.Task;
 import com.example.tasktimer.utils.FutureUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.w3c.dom.Text;
 
@@ -66,6 +68,9 @@ public class TimerFragment extends Fragment {
     private LiveData<Task> currentTaskLiveData;
     private LiveData<Task> nextTaskLiveData;
 
+    private FloatingActionButton endTaskButton;
+    private FloatingActionButton addTimeButton;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentTimerBinding.inflate(inflater, container, false);
@@ -88,6 +93,27 @@ public class TimerFragment extends Fragment {
         };
 
         mainLayout = root.findViewById(R.id.mainContentLayout);
+
+        endTaskButton = root.findViewById(R.id.stopButton);
+        addTimeButton = root.findViewById(R.id.addTimeButton);
+
+        endTaskButton.setOnClickListener(view -> {
+            if(currentTask != null){
+                currentTask.setCompleted(true);
+                currentTask.setEnd(new Date());
+                taskViewModel.update(currentTask);
+            }
+        });
+
+        addTimeButton.setOnClickListener(view -> {
+            Calendar c = Calendar.getInstance();
+            c.setTime(currentTask.getEnd());
+            c.add(Calendar.MINUTE, 5);
+
+            currentTask.setEnd(c.getTime());
+
+            taskViewModel.update(currentTask);
+        });
 
         curTaskTitle = root.findViewById(R.id.curTaskTitle);
         curTaskTime = root.findViewById(R.id.curTaskTime);
@@ -119,12 +145,18 @@ public class TimerFragment extends Fragment {
 
     @Override
     public void onPause() {
-        super.onPause();
         mainHandler.removeCallbacks(updateTimeRunnable);
+        super.onPause();
     }
 
     @SuppressLint("CheckResult")
     private void getCurrentTask(){
+        try{
+            getViewLifecycleOwner();
+        }catch(Exception e){
+            return;
+        }
+
         if(currentTaskLiveData != null)
             currentTaskLiveData.removeObservers(getViewLifecycleOwner());
 
@@ -208,21 +240,39 @@ public class TimerFragment extends Fragment {
 
         DateFormat timeFormat = new SimpleDateFormat(TIME_FORMAT);
 
+        boolean isBreak = false;
+
         if(currentTask == null){
-            curTaskTitle.setText("Have a break!");
-            curTaskTime.setText("");
+            isBreak = true;
         }else {
             if (currentTask.getEnd().getTime() >= new Date().getTime()) {
                 curTaskTitle.setText(currentTask.getTaskName());
                 String time = timeFormat.format(currentTask.getStart()) + " - " + timeFormat.format(currentTask.getEnd());
                 curTaskTime.setText(time);
-            } else if(nextTask != null) {
-                curTaskTitle.setText("Have a break!");
-                curTaskTime.setText("");
+                endTaskButton.setEnabled(true);
             } else {
-                showNoTaskScreen();
+                currentTask.setCompleted(true);
+                taskViewModel.update(currentTask);
+                endTaskButton.setEnabled(false);
+                if(nextTask != null) {
+                    isBreak = true;
+                } else {
+                    showNoTaskScreen();
+                }
             }
         }
+
+        if(isBreak){
+            curTaskTitle.setText("Have a break!");
+            curTaskTime.setText("");
+            endTaskButton.setEnabled(false);
+        }
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+
+        long minsTillNext = (c.getTime().getTime() - currentTask.getEnd().getTime()) / (1000 * 60);
 
         if(nextTask != null){
             nextTaskLayout.setVisibility(View.VISIBLE);
@@ -238,9 +288,13 @@ public class TimerFragment extends Fragment {
             nextDeleteButton.setOnClickListener(v -> {
                 taskViewModel.delete(nextTask);
             });
+
+            minsTillNext = (nextTask.getStart().getTime() - currentTask.getEnd().getTime()) / (1000 * 60);
         }else{
             nextTaskLayout.setVisibility(View.INVISIBLE);
         }
+
+        addTimeButton.setEnabled(!isBreak && minsTillNext >= 5);
 
         updateTime();
 

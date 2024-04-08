@@ -28,24 +28,24 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/pauseButton"
+                android:id="@+id/addTimeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/primary"
                 android:clickable="true"
                 android:scaleType="center"
-                android:src="@drawable/ic_pause"
+                android:src="@drawable/plus_five"
                 app:fabCustomSize="64dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/white" />
+                app:tint="@color/white"
+                android:enabled="true"
+                />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/stopButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/primary"
                 android:clickable="true"
                 android:src="@drawable/ic_stop"
                 app:fabCustomSize="64dp"
