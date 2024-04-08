@@ -31,8 +31,8 @@ public interface TaskDao {
     @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE `end` <= :date ORDER BY `end` LIMIT 1")
     ListenableFuture<Task> getPreviousTask(Date date);
 
-    @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE `end` >= :date ORDER BY `end` LIMIT 1")
-    ListenableFuture<Task> getNextOrCurrentTask(Date date);
+    @Query("SELECT COUNT(*) FROM " + Task.TABLE_NAME + " WHERE :hour BETWEEN (CAST(start / 3600000 AS INT) % 24) AND (CAST(`end` / 3600000 AS INT) % 24)")
+    LiveData<Integer> getProductiveHour(int hour);
 
     @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE `start` <= :date AND `end` <= :endOfDay ORDER BY `start` DESC LIMIT 1")
     LiveData<Task> getCurrentOrPrevTask(Date date, Date endOfDay);

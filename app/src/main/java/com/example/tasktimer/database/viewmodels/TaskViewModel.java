@@ -14,6 +14,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class TaskViewModel extends AndroidViewModel {
     private TaskDao taskDao;
@@ -74,6 +75,11 @@ public class TaskViewModel extends AndroidViewModel {
         Date endOfDay = c.getTime();
 
         return taskDao.getNextTask(task.getEnd(), endOfDay);
+    }
+
+    public LiveData<Integer> getProductiveHour(int hour){
+        int hourOffset = TimeZone.getDefault().getOffset(new Date().getTime()) / 3600000;
+        return taskDao.getProductiveHour(hour - hourOffset);
     }
 
 //    public LiveData<Task> getNextTask(Date date){
