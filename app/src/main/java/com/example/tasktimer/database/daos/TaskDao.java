@@ -25,16 +25,16 @@ public interface TaskDao {
     @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE start BETWEEN :start AND :end ORDER BY start")
     LiveData<List<Task>> getTasksBetweenDate(Date start, Date end);
 
-    @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE start > :date AND `end` <= :endOfDay ORDER BY start LIMIT 1")
+    @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE NOT completed AND start > :date AND `end` <= :endOfDay ORDER BY start LIMIT 1")
     LiveData<Task> getNextTask(Date date, Date endOfDay);
 
     @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE `end` <= :date ORDER BY `end` LIMIT 1")
     ListenableFuture<Task> getPreviousTask(Date date);
 
-    @Query("SELECT COUNT(*) FROM " + Task.TABLE_NAME + " WHERE :hour BETWEEN (CAST(start / 3600000 AS INT) % 24) AND (CAST(`end` / 3600000 AS INT) % 24)")
+    @Query("SELECT COUNT(*) FROM " + Task.TABLE_NAME + " WHERE completed AND :hour BETWEEN (CAST(start / 3600000 AS INT) % 24) AND (CAST(`end` / 3600000 AS INT) % 24)")
     LiveData<Integer> getProductiveHour(int hour);
 
-    @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE `start` <= :date AND `end` <= :endOfDay ORDER BY `start` DESC LIMIT 1")
+    @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE NOT completed AND `start` <= :date AND `end` <= :endOfDay ORDER BY `start` DESC LIMIT 1")
     LiveData<Task> getCurrentOrPrevTask(Date date, Date endOfDay);
 
     @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE start < :date ORDER BY start")

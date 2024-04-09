@@ -198,16 +198,18 @@ public class TimerFragment extends Fragment {
             return;
         }
 
+        long timeDiff = 0;
+        long timePassed = 0;
+        long currentTime = new Date().getTime();
+
         if(currentTask == null){
             timerProgress.setProgress(100);
             timerText.setText("");
+
+            timeDiff = nextTask.getStart().getTime() - currentTime;
         }else{
             long taskStartTime = currentTask.getStart().getTime();
             long taskEndTime = currentTask.getEnd().getTime();
-            long currentTime = new Date().getTime();
-
-            long timeDiff = 0;
-            long timePassed = 0;
 
             if(currentTime >= taskStartTime && currentTime <= taskEndTime){
                 timeDiff = taskEndTime - taskStartTime;
@@ -218,16 +220,16 @@ public class TimerFragment extends Fragment {
                     timePassed = currentTime - taskEndTime;
                 }
             }
-
-            float progress = (float) (timePassed) / timeDiff;
-            timerProgress.setProgress((int) (progress * 100));
-
-            int timeLeftS = (int)((timeDiff - timePassed) / 1000);
-            int minsLeft = Math.floorDiv(timeLeftS, 60);
-            int secsLeft = timeLeftS % 60;
-
-            timerText.setText(String.format("%2s:%2s", minsLeft, secsLeft).replace(' ', '0'));
         }
+
+        float progress = (float) (timePassed) / timeDiff;
+        timerProgress.setProgress((int) (progress * 100));
+
+        int timeLeftS = (int)((timeDiff - timePassed) / 1000);
+        int minsLeft = Math.floorDiv(timeLeftS, 60);
+        int secsLeft = timeLeftS % 60;
+
+        timerText.setText(String.format("%2s:%2s", minsLeft, secsLeft).replace(' ', '0'));
     }
 
     private void updateTasks(){
@@ -242,9 +244,17 @@ public class TimerFragment extends Fragment {
 
         boolean isBreak = false;
 
+        long minsTillNext = 0;
+
         if(currentTask == null){
             isBreak = true;
         }else {
+            Calendar c = Calendar.getInstance();
+            c.set(Calendar.HOUR_OF_DAY, 23);
+            c.set(Calendar.MINUTE, 59);
+
+            minsTillNext = (c.getTime().getTime() - currentTask.getEnd().getTime()) / (1000 * 60);
+
             if (currentTask.getEnd().getTime() >= new Date().getTime()) {
                 curTaskTitle.setText(currentTask.getTaskName());
                 String time = timeFormat.format(currentTask.getStart()) + " - " + timeFormat.format(currentTask.getEnd());
@@ -268,12 +278,6 @@ public class TimerFragment extends Fragment {
             endTaskButton.setEnabled(false);
         }
 
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, 23);
-        c.set(Calendar.MINUTE, 59);
-
-        long minsTillNext = (c.getTime().getTime() - currentTask.getEnd().getTime()) / (1000 * 60);
-
         if(nextTask != null){
             nextTaskLayout.setVisibility(View.VISIBLE);
 
@@ -289,7 +293,9 @@ public class TimerFragment extends Fragment {
                 taskViewModel.delete(nextTask);
             });
 
-            minsTillNext = (nextTask.getStart().getTime() - currentTask.getEnd().getTime()) / (1000 * 60);
+            if(currentTask != null){
+                minsTillNext = (nextTask.getStart().getTime() - currentTask.getEnd().getTime()) / (1000 * 60);
+            }
         }else{
             nextTaskLayout.setVisibility(View.INVISIBLE);
         }
