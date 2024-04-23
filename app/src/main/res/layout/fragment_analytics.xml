@@ -6,51 +6,40 @@
     android:layout_height="match_parent"
     tools:context=".ui.analytics.AnalyticsFragment">
 
-    <TextView
-        android:id="@+id/completedTasksText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:text="Tasks Completed Today:"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/completedTasks"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/taskCompletedLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="100"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/completedTasksText"
-        app:layout_constraintStart_toEndOf="@+id/completedTasksText"
-        app:layout_constraintTop_toTopOf="@+id/completedTasksText" />
-
-    <TextView
-        android:id="@+id/delayedTasks"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="100"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/delayedTasksText"
-        app:layout_constraintStart_toStartOf="@+id/completedTasks"
-        app:layout_constraintTop_toTopOf="@+id/delayedTasksText" />
-
-    <TextView
-        android:id="@+id/delayedTasksText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Tasks Delayed Today:"
-        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/completedTasksText" />
+        app:layout_constraintTop_toTopOf="parent">
 
+        <TextView
+            android:id="@+id/completedTasksText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tasks Completed Today:"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/completedTasks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="100"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/completedTasksText"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/productiveChartTitle"
@@ -62,7 +51,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/delayedTasksText" />
+        app:layout_constraintTop_toBottomOf="@+id/taskCompletedLayout" />
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/barChart"
@@ -103,4 +92,5 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/completedChartTitle" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

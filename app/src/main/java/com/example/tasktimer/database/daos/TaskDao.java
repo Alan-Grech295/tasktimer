@@ -22,6 +22,12 @@ public interface TaskDao {
     @Query("SELECT * FROM " + Task.TABLE_NAME + " ORDER BY start")
     LiveData<List<Task>> getAll();
 
+    @Query("SELECT * FROM " + Task.TABLE_NAME + " ORDER BY start LIMIT 1")
+    LiveData<Task> getFirstTask();
+
+    @Query("SELECT COUNT(*) FROM " + Task.TABLE_NAME + " WHERE completed AND (start BETWEEN :startDate AND :endDate OR `end` BETWEEN :startDate AND :endDate)")
+    LiveData<Integer> getNumCompletedTasks(Date startDate, Date endDate);
+
     @Query("SELECT * FROM " + Task.TABLE_NAME + " WHERE start BETWEEN :start AND :end ORDER BY start")
     LiveData<List<Task>> getTasksBetweenDate(Date start, Date end);
 

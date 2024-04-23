@@ -57,8 +57,29 @@ public class TaskViewModel extends AndroidViewModel {
         return taskDao.getCurrentOrPrevTask(date, endOfDay);
     }
 
+    public LiveData<Task> getFirstTask() {
+        return taskDao.getFirstTask();
+    }
+
+    public LiveData<Integer> getCompletedTaskCount(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+
+        Date startOfDay = c.getTime();
+
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+
+        Date endOfDay = c.getTime();
+
+        return taskDao.getNumCompletedTasks(startOfDay, endOfDay);
+    }
+
     public LiveData<Task> getNextTask(Date date){
         Calendar c = Calendar.getInstance();
+        c.setTime(date);
         c.set(Calendar.HOUR_OF_DAY, 23);
         c.set(Calendar.MINUTE, 59);
 
