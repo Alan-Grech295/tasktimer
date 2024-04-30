@@ -91,9 +91,9 @@ public class MainActivity extends AppCompatActivity {
                                 mainHandler.post(() -> CalendarHelper.deleteEvent(this, task.getEventURI()));
                             }catch (Exception ignored){
                             }
-                        }else{
-                            task.setEventURI(CalendarHelper.addEvent(this, calendarDatas[calendarIndex].calendarID, task.getTaskName(), task.getStart(), task.getEnd()));
                         }
+
+                        task.setEventURI(CalendarHelper.addEvent(this, calendarDatas[calendarIndex].calendarID, task.getTaskName(), task.getStart(), task.getEnd()));
                     }
 
                     Toast.makeText(this, "Successfully exported tasks to " + calendarDatas[calendarIndex].calendarName, Toast.LENGTH_SHORT).show();
