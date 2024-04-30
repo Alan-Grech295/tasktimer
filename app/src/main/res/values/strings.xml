@@ -4,5 +4,6 @@
     <string name="title_timer">Timer</string>
     <string name="title_analytics">Analytics</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="calendar_import">Import from Calendar…</string>
+    <string name="calendar_export">Export to Calendar…</string>
 </resources>

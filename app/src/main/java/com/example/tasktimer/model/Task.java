@@ -15,6 +15,7 @@ public class Task {
     private boolean completed;
     private Date start;
     private Date end;
+    private String eventURI = null;
 
     public Task(String taskName, Date start, Date end) {
         this.taskName = taskName;
@@ -61,5 +62,13 @@ public class Task {
 
     public void setUid(int uid) {
         this.uid = uid;
+    }
+
+    public String getEventURI() {
+        return eventURI;
+    }
+
+    public void setEventURI(String eventURI) {
+        this.eventURI = eventURI;
     }
 }

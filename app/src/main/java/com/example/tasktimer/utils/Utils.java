@@ -2,6 +2,7 @@ package com.example.tasktimer.utils;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class Utils {
     public static boolean onSameDay(Date date1, Date date2){
@@ -11,5 +12,13 @@ public class Utils {
         cal2.setTime(date2);
         return cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
                 cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
+    }
+
+    public static long toUTCMillis(Date date){
+        long ms = date.getTime();
+
+        int offset = TimeZone.getDefault().getOffset(ms);
+
+        return ms - offset;
     }
 }
