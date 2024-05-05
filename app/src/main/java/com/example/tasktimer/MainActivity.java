@@ -74,10 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_import){
-
-            return true;
-        }else if(item.getItemId() == R.id.action_export){
+        if(item.getItemId() == R.id.action_export){
             CalendarHelper.CalendarData[] calendarDatas = CalendarHelper.getCalendars(this.getApplicationContext());
             int calendarIndex = 8;
 

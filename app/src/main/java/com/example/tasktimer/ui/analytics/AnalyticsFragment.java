@@ -22,6 +22,7 @@ import com.example.tasktimer.databinding.FragmentAnalyticsBinding;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -82,9 +83,13 @@ public class AnalyticsFragment extends Fragment {
 
     private void bindCompletedTasks() {
         taskViewModel.getFirstTask().observe(getViewLifecycleOwner(), task -> {
-            if(task == null) return;
+            Date taskStart = new Date();
 
-            bindTasksFromDate(task.getStart());
+            if(task != null){
+                taskStart = task.getStart();
+            }
+
+            bindTasksFromDate(taskStart);
 
             LineDataSet dataSet = new LineDataSet(completedTasksData, "Completed Tasks");
             LineData lineData = new LineData(dataSet);
@@ -99,6 +104,9 @@ public class AnalyticsFragment extends Fragment {
                     return taskCompletedXLabels.get((int)value);
                 }
             });
+
+            tasksCompletedChart.getAxis(YAxis.AxisDependency.LEFT).setAxisMinimum(0);
+            tasksCompletedChart.getAxis(YAxis.AxisDependency.RIGHT).setAxisMinimum(0);
 
             dataSet.setValueTextSize(12f);
             tasksCompletedChart.getDescription().setEnabled(false);
