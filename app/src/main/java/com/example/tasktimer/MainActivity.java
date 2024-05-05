@@ -87,25 +87,24 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     for(Task task : tasks){
                         if(task.getEventURI() != null){
-                            try{
-                                mainHandler.post(() -> CalendarHelper.deleteEvent(this, task.getEventURI()));
-                            }catch (Exception ignored){
-                            }
+                            mainHandler.post(() -> {
+                                Log.d("Calendar Delete", CalendarHelper.deleteEvent(this, task.getEventURI()) + ", " + task.getEventURI());
+                            });
                         }
 
-                        task.setEventURI(CalendarHelper.addEvent(this, calendarDatas[calendarIndex].calendarID, task.getTaskName(), task.getStart(), task.getEnd()));
+                        mainHandler.post(() -> {
+                            task.setEventURI(CalendarHelper.addEvent(this, calendarDatas[calendarIndex].calendarID, task.getTaskName(), task.getStart(), task.getEnd()));
+                            taskViewModel.update(task);
+                            Log.d("Calendar add", "Added task with URI " + task.getEventURI());
+                        });
                     }
 
-                    Toast.makeText(this, "Successfully exported tasks to " + calendarDatas[calendarIndex].calendarName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, String.format("Successfully exported %s tasks to %s", Integer.toString(tasks.size()), calendarDatas[calendarIndex].calendarName), Toast.LENGTH_SHORT).show();
                 }catch (Exception e){
                     Toast.makeText(this, "Error when exporting tasks to " + calendarDatas[calendarIndex].calendarName, Toast.LENGTH_SHORT).show();
                 }
 
                 tasksLiveData.removeObservers(this);
-
-                for(Task task : tasks){
-                    taskViewModel.update(task);
-                }
             };
             tasksLiveData.observe(this, observer);
             return true;

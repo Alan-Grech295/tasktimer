@@ -56,30 +56,12 @@ public class CalendarHelper {
         return ret;
     }
 
-    public static void updateEvent(Activity activity, String eventURI, String calendarId, String title, Date startTime,
-                                  Date endTime) {
+    public static int deleteEvent(Activity activity, String eventURI) {
         if (activity.checkSelfPermission(Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_CALENDAR}, PERMISSION_REQUEST_WRITE_CALENDAR);
-            return;
+            return 0;
         }
 
-        ContentValues event = new ContentValues();
-        event.put(CalendarContract.Events.CALENDAR_ID, calendarId); // "" for insert
-        event.put(CalendarContract.Events.TITLE, title);
-//        event.put(CalendarContract.Events.DESCRIPTION, "");
-//        event.put(CalendarContract.Events.EVENT_LOCATION, "");
-//        event.put(CalendarContract.Events.ALL_DAY, 0);
-//        event.put(CalendarContract.Events.STATUS, 1);
-        event.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().toString());
-//        event.put("transparency", 0);
-        event.put(CalendarContract.Events.DTSTART, startTime.getTime());
-        event.put(CalendarContract.Events.DTEND, endTime.getTime());
-
-        ContentResolver contentResolver = activity.getContentResolver();
-        contentResolver.update(Uri.parse(eventURI), event, null, null);
-    }
-
-    public static int deleteEvent(Activity activity, String eventURI) {
         if (activity.checkSelfPermission(Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_CALENDAR}, PERMISSION_REQUEST_READ_CALENDAR);
             return 0;
