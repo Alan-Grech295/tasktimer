@@ -37,7 +37,6 @@ android {
 dependencies {
     
     implementation(libs.appcompat)
-    implementation(libs.material)
     implementation(libs.constraintlayout)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
@@ -46,7 +45,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation("com.google.android.material:material:1.11.0")
+    val m3_version = "1.2.1"
+
+    implementation(libs.material3.android)
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     
     val room_version = "2.6.1"
