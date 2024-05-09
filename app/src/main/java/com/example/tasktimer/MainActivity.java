@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.tasktimer.database.viewmodels.TaskViewModel;
 import com.example.tasktimer.model.Task;
+import com.example.tasktimer.ui.ChooseCalendarPopup;
 import com.example.tasktimer.utils.CalendarHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -31,6 +33,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.tasktimer.databinding.ActivityMainBinding;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -76,51 +79,59 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_export){
             CalendarHelper.CalendarData[] calendarDatas = CalendarHelper.getCalendars(this.getApplicationContext());
-            int calendarIndex = 8;
 
-            TaskViewModel taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
-            LiveData<List<Task>> tasksLiveData = taskViewModel.getAllTasks();
-            Observer<List<Task>> observer = tasks -> {
-                try {
-                    for(Task task : tasks){
-                        if(task.getEventURI() != null){
-                            mainHandler.post(() -> {
-                                Log.d("Calendar Delete", CalendarHelper.deleteEvent(this, task.getEventURI()) + ", " + task.getEventURI());
-                            });
-                        }
+            DialogFragment popup = new ChooseCalendarPopup(Arrays.stream(calendarDatas).map(c -> c.calendarName).toArray(String[]::new), calendar -> {
+                CalendarHelper.CalendarData calendarData = null;
 
-                        mainHandler.post(() -> {
-                            task.setEventURI(CalendarHelper.addEvent(this, calendarDatas[calendarIndex].calendarID, task.getTaskName(), task.getStart(), task.getEnd()));
-                            taskViewModel.update(task);
-                            Log.d("Calendar add", "Added task with URI " + task.getEventURI());
-                        });
+                for(CalendarHelper.CalendarData cal : calendarDatas){
+                    if(cal.calendarName.equals(calendar)){
+                        calendarData = cal;
+                        break;
                     }
-
-                    Toast.makeText(this, String.format("Successfully exported %s tasks to %s", Integer.toString(tasks.size()), calendarDatas[calendarIndex].calendarName), Toast.LENGTH_SHORT).show();
-                }catch (Exception e){
-                    Toast.makeText(this, "Error when exporting tasks to " + calendarDatas[calendarIndex].calendarName, Toast.LENGTH_SHORT).show();
                 }
 
-                tasksLiveData.removeObservers(this);
-            };
-            tasksLiveData.observe(this, observer);
+                if(calendarData == null) return;
+                exportToCalendar(calendarData);
+            });
+            popup.show(getSupportFragmentManager(), "Choose calendar");
+
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void exportToCalendar(CalendarHelper.CalendarData calendar){
+        TaskViewModel taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+        LiveData<List<Task>> tasksLiveData = taskViewModel.getAllTasks();
+        Observer<List<Task>> observer = tasks -> {
+            try {
+                for(Task task : tasks){
+                    if(task.getEventURI() != null){
+                        mainHandler.post(() -> {
+                            Log.d("Calendar Delete", CalendarHelper.deleteEvent(this, task.getEventURI()) + ", " + task.getEventURI());
+                        });
+                    }
+
+                    mainHandler.post(() -> {
+                        task.setEventURI(CalendarHelper.addEvent(this, calendar.calendarID, task.getTaskName(), task.getStart(), task.getEnd()));
+                        taskViewModel.update(task);
+                        Log.d("Calendar add", "Added task with URI " + task.getEventURI());
+                    });
+                }
+
+                Toast.makeText(this, String.format("Successfully exported %s tasks to %s", Integer.toString(tasks.size()), calendar.calendarName), Toast.LENGTH_SHORT).show();
+            }catch (Exception e){
+                Toast.makeText(this, "Error when exporting tasks to " + calendar.calendarName, Toast.LENGTH_SHORT).show();
+            }
+
+            tasksLiveData.removeObservers(this);
+        };
+        tasksLiveData.observe(this, observer);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if (requestCode == PERMISSION_REQUEST_WRITE_CALENDAR) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                // Permission granted, proceed with inserting events
-//                insertEvents();
-//            } else {
-//                // Permission denied
-//                // Handle the situation when the user denies the permission
-//            }
-//        }
     }
 }
