@@ -25,7 +25,8 @@
             android:text="Productive Hours"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/completedChartTitle"
@@ -35,7 +36,8 @@
             android:text="Tasks Completed"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout

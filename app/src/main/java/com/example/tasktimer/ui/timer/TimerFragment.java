@@ -97,6 +97,8 @@ public class TimerFragment extends Fragment {
         endTaskButton = root.findViewById(R.id.stopButton);
         addTimeButton = root.findViewById(R.id.addTimeButton);
 
+        mainLayout.setVisibility(View.GONE);
+
         endTaskButton.setOnClickListener(view -> {
             if(currentTask != null){
                 currentTask.setCompleted(true);
