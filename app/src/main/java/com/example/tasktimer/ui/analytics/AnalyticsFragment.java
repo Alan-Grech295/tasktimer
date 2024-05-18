@@ -3,8 +3,10 @@ package com.example.tasktimer.ui.analytics;
 import static com.example.tasktimer.utils.Constants.DATE_FORMAT;
 import static com.example.tasktimer.utils.Utils.onSameDay;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -147,6 +149,8 @@ public class AnalyticsFragment extends Fragment {
 
                 LineDataSet set = (LineDataSet)tasksCompletedChart.getData().getDataSetByIndex(0);
                 set.setValues(completedTasksData);
+                set.setColors(new int[] {R.color.primary}, getContext());
+                set.setCircleColors(new int[] {R.color.black}, getContext());
                 tasksCompletedChart.getData().notifyDataChanged();
                 tasksCompletedChart.notifyDataSetChanged();
                 tasksCompletedChart.invalidate();
@@ -177,6 +181,7 @@ public class AnalyticsFragment extends Fragment {
         }
 
         BarDataSet dataSet = new BarDataSet(productiveHoursData, "Productive Hours");
+        dataSet.setColors(new int[] {R.color.primary}, getContext());
         BarData barData = new BarData(dataSet);
         productiveHoursChart.setData(barData);
 

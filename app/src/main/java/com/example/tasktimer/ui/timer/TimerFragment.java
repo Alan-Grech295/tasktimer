@@ -228,10 +228,15 @@ public class TimerFragment extends Fragment {
         timerProgress.setProgress((int) (progress * 100));
 
         int timeLeftS = (int)((timeDiff - timePassed) / 1000);
-        int minsLeft = Math.floorDiv(timeLeftS, 60);
+        int hoursLeft = Math.floorDiv(timeLeftS, 3600);
+        int minsLeft = Math.floorDiv(timeLeftS - (hoursLeft * 3600), 60);
         int secsLeft = timeLeftS % 60;
 
-        timerText.setText(String.format("%2s:%2s", minsLeft, secsLeft).replace(' ', '0'));
+        if(hoursLeft > 0){
+            timerText.setText(String.format("%2s:%2s:%2s", hoursLeft, minsLeft, secsLeft).replace(' ', '0'));
+        }else{
+            timerText.setText(String.format("%2s:%2s", minsLeft, secsLeft).replace(' ', '0'));
+        }
     }
 
     private void updateTasks(){
