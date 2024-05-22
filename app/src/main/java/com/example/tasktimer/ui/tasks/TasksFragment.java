@@ -1,7 +1,6 @@
 package com.example.tasktimer.ui.tasks;
 
 import static com.example.tasktimer.utils.Constants.DATE_FORMAT;
-import static com.example.tasktimer.utils.Constants.TIME_FORMAT;
 
 import android.animation.ValueAnimator;
 import android.os.Bundle;
@@ -57,6 +56,10 @@ public class TasksFragment extends Fragment {
 
     final int ANIM_DURATION = 200;
 
+    AtomicReference<Date> taskDate = new AtomicReference<>(null);
+    AtomicReference<Pair<Integer, Integer>> taskStartTime = new AtomicReference<>(null);
+    AtomicReference<Pair<Integer, Integer>> taskEndTime = new AtomicReference<>(null);
+
     int height = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -68,6 +71,8 @@ public class TasksFragment extends Fragment {
         curTasksList = root.findViewById(R.id.curTasksList);
         futureTasksList = root.findViewById(R.id.futureTasksList);
 
+        // Gets the height of a list item to make the open accordions fill
+        // the screen space
         ViewTreeObserver vto = curTasksList.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -77,8 +82,6 @@ public class TasksFragment extends Fragment {
                 heights[ListType.CURRENT.ordinal()] = height;
             }
         });
-
-//        int height = getTaskListHeight();
 
         TaskViewModel taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
 
@@ -116,17 +119,12 @@ public class TasksFragment extends Fragment {
         showTaskList(ListType.CURRENT, height);
 
         FloatingActionButton addTaskFAB = root.findViewById(R.id.addTaskButton);
+        // When the plus button is pressed
         addTaskFAB.setOnClickListener(v -> {
-//            DialogFragment popup = new AddTaskPopup();
-//            popup.show(getParentFragmentManager(), "Add Task");
-
+            // Creates a bottom sheet dialog with the task inputs
             final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getActivity(), com.google.android.material.R.style.Base_V14_ThemeOverlay_MaterialComponents_BottomSheetDialog);
             View bottomSheetView = LayoutInflater.from(getActivity().getApplicationContext())
                     .inflate(R.layout.fragment_add_task_popup, root.findViewById(R.id.popupContainer));
-
-            AtomicReference<Date> taskDate = new AtomicReference<>(null);
-            AtomicReference<Pair<Integer, Integer>> taskStartTime = new AtomicReference<>(null);
-            AtomicReference<Pair<Integer, Integer>> taskEndTime = new AtomicReference<>(null);
 
             EditText taskTitleText = bottomSheetView.findViewById(R.id.taskNameEditText);
             EditText dateText = bottomSheetView.findViewById(R.id.dateEditText);
@@ -136,9 +134,12 @@ public class TasksFragment extends Fragment {
             Button cancelButton = bottomSheetView.findViewById(R.id.cancelButton);
             Button addButton = bottomSheetView.findViewById(R.id.addTaskButton);
 
-            cancelButton.setOnClickListener(view -> {
-                bottomSheetDialog.dismiss();
-            });
+            // Clears input values
+            taskDate.set(null);
+            taskStartTime.set(null);
+            taskEndTime.set(null);
+
+            cancelButton.setOnClickListener(view -> bottomSheetDialog.dismiss());
 
             addButton.setOnClickListener(view -> {
                 if(addGoal(taskTitleText, dateText, taskStartTime, taskEndTime, taskDate, startTimeText, endTimeText)){
@@ -146,89 +147,18 @@ public class TasksFragment extends Fragment {
                 }
             });
 
-            SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
-            SimpleDateFormat timeFormatter = new SimpleDateFormat(TIME_FORMAT);
+            // Shows the date picker when the date text is pressed
+            dateText.setOnClickListener(view -> showDatePicker(dateText));
 
-            dateText.setOnClickListener(view -> {
-                Date curDate = taskDate.get() == null ? new Date() : taskDate.get();
+            // Shows the time picker when the time text is pressed
+            startTimeText.setOnClickListener(view -> showTimePicker(taskStartTime, startTimeText, "Select Task Start Time"));
 
-                Calendar c = Calendar.getInstance();
-                c.setTime(curDate);
-                CalendarConstraints constraints = new CalendarConstraints.Builder()
-                        .setValidator(DateValidatorPointForward.now())
-                        .build();
-
-                MaterialDatePicker<Long> picker = MaterialDatePicker.Builder.datePicker()
-                        .setTitleText("Select Task Date")
-                        .setCalendarConstraints(constraints)
-                        .setSelection(c.getTimeInMillis())
-                        .build();
-
-                picker.show(getParentFragmentManager(), null);
-
-                picker.addOnPositiveButtonClickListener(o -> {
-                    taskDate.set(new Date(o));
-                    dateText.setText(formatter.format(taskDate.get()));
-                    dateText.setError(null);
-                });
-            });
-
-            startTimeText.setOnClickListener(view -> {
-                Pair<Integer, Integer> curTime = taskStartTime.get() == null ? dateToTime(new Date()) : taskStartTime.get();
-
-                MaterialTimePicker picker = new MaterialTimePicker.Builder()
-                        .setTimeFormat(TimeFormat.CLOCK_24H)
-                        .setHour(curTime.first)
-                        .setMinute(curTime.second)
-                        .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
-                        .setTitleText("Select Task Start time")
-                        .build();
-
-                picker.show(getParentFragmentManager(), null);
-
-                picker.addOnPositiveButtonClickListener(o -> {
-                    int minute = picker.getMinute();
-                    int hour = picker.getHour();
-
-                    taskStartTime.set(new Pair<>(hour, minute));
-
-                    String minText = String.format("%2s", minute).replace(' ', '0');
-                    String hourText = String.format("%2s", hour).replace(' ', '0');
-
-                    startTimeText.setText(hourText + ":" + minText);
-                    startTimeText.setError(null);
-                });
-            });
-
-            endTimeText.setOnClickListener(view -> {
-                Pair<Integer, Integer> curTime = taskEndTime.get() == null ? dateToTime(new Date()) : taskEndTime.get();
-
-                MaterialTimePicker picker = new MaterialTimePicker.Builder()
-                        .setTimeFormat(TimeFormat.CLOCK_24H)
-                        .setHour(curTime.first)
-                        .setMinute(curTime.second)
-                        .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
-                        .setTitleText("Select Task End time")
-                        .build();
-
-                picker.show(getParentFragmentManager(), null);
-
-                picker.addOnPositiveButtonClickListener(o -> {
-                    int minute = picker.getMinute();
-                    int hour = picker.getHour();
-
-                    taskEndTime.set(new Pair<>(hour, minute));
-
-                    String minText = String.format("%2s", minute).replace(' ', '0');
-                    String hourText = String.format("%2s", hour).replace(' ', '0');
-
-                    endTimeText.setText(hourText + ":" + minText);
-                    endTimeText.setError(null);
-                });
-            });
+            // Shows the time picker when the time text is pressed
+            endTimeText.setOnClickListener(view -> showTimePicker(taskEndTime, endTimeText, "Select Task End Time"));
 
             bottomSheetDialog.setContentView(bottomSheetView);
 
+            // Ensures bottom modal is fully expanded even when in landscape orientation
             BottomSheetBehavior<View> behaviour = BottomSheetBehavior.from((View)bottomSheetView.getParent());
             behaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
 
@@ -241,17 +171,58 @@ public class TasksFragment extends Fragment {
         return root;
     }
 
-    private int getTaskListHeight(){
-        pastTasksList.setVisibility(View.GONE);
-        curTasksList.setVisibility(View.GONE);
-        futureTasksList.setVisibility(View.VISIBLE);
+    private void showDatePicker(EditText dateText){
+        final SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
 
-        int height = futureTasksList.getMeasuredHeight();
+        Date curDate = taskDate.get() == null ? new Date() : taskDate.get();
 
-        pastTasksList.setVisibility(View.VISIBLE);
-        curTasksList.setVisibility(View.VISIBLE);
+        Calendar c = Calendar.getInstance();
+        c.setTime(curDate);
+        CalendarConstraints constraints = new CalendarConstraints.Builder()
+                .setValidator(DateValidatorPointForward.now())
+                .build();
 
-        return height;
+        MaterialDatePicker<Long> picker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Select Task Date")
+                .setCalendarConstraints(constraints)
+                .setSelection(c.getTimeInMillis())
+                .build();
+
+        picker.show(getParentFragmentManager(), null);
+
+        picker.addOnPositiveButtonClickListener(o -> {
+            taskDate.set(new Date(o));
+            dateText.setText(formatter.format(taskDate.get()));
+            dateText.setError(null);
+        });
+    }
+
+    private void showTimePicker(AtomicReference<Pair<Integer, Integer>> time, EditText timeText, String title){
+        Pair<Integer, Integer> curTime = time.get() == null ? dateToTime(new Date()) : time.get();
+
+        // Creates the material time picker
+        MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(curTime.first)
+                .setMinute(curTime.second)
+                .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+                .setTitleText(title)
+                .build();
+
+        picker.show(getParentFragmentManager(), null);
+
+        picker.addOnPositiveButtonClickListener(o -> {
+            int minute = picker.getMinute();
+            int hour = picker.getHour();
+
+            time.set(new Pair<>(hour, minute));
+
+            String minText = String.format("%2s", minute).replace(' ', '0');
+            String hourText = String.format("%2s", hour).replace(' ', '0');
+
+            timeText.setText(hourText + ":" + minText);
+            timeText.setError(null);
+        });
     }
 
     private Task_RecyclerViewAdapter setupRecyclerView(RecyclerView list, TaskViewModel viewModel){
@@ -266,6 +237,7 @@ public class TasksFragment extends Fragment {
         curTasksList.setVisibility(View.VISIBLE);
         futureTasksList.setVisibility(View.VISIBLE);
 
+        // Animates the height of the past tasks accordion height to make it grow/shrink
         ValueAnimator pastTasksAnim = ValueAnimator.ofInt(heights[ListType.PAST.ordinal()],
                 type == ListType.PAST ? height : 0);
         pastTasksAnim.addUpdateListener(valueAnimator -> {
@@ -278,6 +250,7 @@ public class TasksFragment extends Fragment {
         pastTasksAnim.setDuration(ANIM_DURATION);
         pastTasksAnim.start();
 
+        // Animates the height of the current tasks accordion height to make it grow/shrink
         ValueAnimator curTasksAnim = ValueAnimator.ofInt(heights[ListType.CURRENT.ordinal()],
                 type == ListType.CURRENT ? height : 0);
         curTasksAnim.addUpdateListener(valueAnimator -> {
@@ -290,6 +263,7 @@ public class TasksFragment extends Fragment {
         curTasksAnim.setDuration(ANIM_DURATION);
         curTasksAnim.start();
 
+        // Animates the height of the futures tasks accordion height to make it grow/shrink
         ValueAnimator futureTasksAnim = ValueAnimator.ofInt(heights[ListType.FUTURE.ordinal()],
                 type == ListType.FUTURE ? height : 0);
         futureTasksAnim.addUpdateListener(valueAnimator -> {
@@ -302,6 +276,7 @@ public class TasksFragment extends Fragment {
         futureTasksAnim.setDuration(ANIM_DURATION);
         futureTasksAnim.start();
 
+        // Animates the rotation of the accordion carets
         dropdown1.animate().rotation(type == ListType.PAST ? 0 : -90).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(ANIM_DURATION);
         dropdown2.animate().rotation(type == ListType.CURRENT ? 0 : -90).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(ANIM_DURATION);
         dropdown3.animate().rotation(type == ListType.FUTURE ? 0 : -90).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(ANIM_DURATION);
@@ -313,6 +288,7 @@ public class TasksFragment extends Fragment {
         binding = null;
     }
 
+    // Converts date to hour, minute pair
     private Pair<Integer, Integer> dateToTime(Date date){
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -326,7 +302,6 @@ public class TasksFragment extends Fragment {
                          AtomicReference<Date> taskDate,
                          EditText startTimeText, EditText endTimeText){
         boolean foundError = false;
-        //Should use isBlank
         if (taskTitleText.getText().toString().trim().isEmpty()) {
             taskTitleText.setError("Task name cannot be empty");
             foundError = true;
@@ -344,6 +319,7 @@ public class TasksFragment extends Fragment {
             startTimeText.setError("You must pick a starting time for the task");
             foundError = true;
         } else if (startTimeMins >= endTimeMins){
+            // Makes sure the start time is before the end time
             startTimeText.setError("You must pick a starting time earlier than the end time");
             foundError = true;
         }
@@ -352,6 +328,7 @@ public class TasksFragment extends Fragment {
             endTimeText.setError("You must pick an end time for the task");
             foundError = true;
         } else if (startTimeMins >= endTimeMins){
+            // Makes sure the start time is before the end time
             endTimeText.setError("You must pick an end time later than the start time");
             foundError = true;
         }

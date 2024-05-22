@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    // Called when the export to calendar menu item is pressed
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_export){
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
             DialogFragment popup = new ChooseCalendarPopup(Arrays.stream(calendarDatas).map(c -> c.calendarName).toArray(String[]::new), calendar -> {
                 CalendarHelper.CalendarData calendarData = null;
 
+                // Finds the calendar data with the calendar name
                 for(CalendarHelper.CalendarData cal : calendarDatas){
                     if(cal.calendarName.equals(calendar)){
                         calendarData = cal;
@@ -93,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 if(calendarData == null) return;
                 exportToCalendar(calendarData);
             });
-            popup.show(getSupportFragmentManager(), "Choose calendar");
+            popup.show(getSupportFragmentManager(), "Choose a calendar");
 
             return true;
         }
@@ -107,20 +109,20 @@ public class MainActivity extends AppCompatActivity {
         Observer<List<Task>> observer = tasks -> {
             try {
                 for(Task task : tasks){
+                    // If a calendar event already exists, delete it
                     if(task.getEventURI() != null){
                         mainHandler.post(() -> {
-                            Log.d("Calendar Delete", CalendarHelper.deleteEvent(this, task.getEventURI()) + ", " + task.getEventURI());
+                            CalendarHelper.deleteEvent(this, task.getEventURI());
                         });
                     }
 
                     mainHandler.post(() -> {
                         task.setEventURI(CalendarHelper.addEvent(this, calendar.calendarID, task.getTaskName(), task.getStart(), task.getEnd()));
                         taskViewModel.update(task);
-                        Log.d("Calendar add", "Added task with URI " + task.getEventURI());
                     });
                 }
 
-                Toast.makeText(this, String.format("Successfully exported %s tasks to %s", Integer.toString(tasks.size()), calendar.calendarName), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, String.format("Successfully exported %s tasks to %s", tasks.size(), calendar.calendarName), Toast.LENGTH_SHORT).show();
             }catch (Exception e){
                 Toast.makeText(this, "Error when exporting tasks to " + calendar.calendarName, Toast.LENGTH_SHORT).show();
             }
@@ -128,10 +130,5 @@ public class MainActivity extends AppCompatActivity {
             tasksLiveData.removeObservers(this);
         };
         tasksLiveData.observe(this, observer);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

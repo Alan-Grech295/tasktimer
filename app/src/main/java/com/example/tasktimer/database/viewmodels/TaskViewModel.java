@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+// View model for accessing/modifying tasks
 public class TaskViewModel extends AndroidViewModel {
     private TaskDao taskDao;
 
@@ -30,15 +31,18 @@ public class TaskViewModel extends AndroidViewModel {
 
     public LiveData<List<Task>> getAllTasks() { return taskLiveData; }
 
+    // Gets all the tasks on the day of the given date
     public LiveData<List<Task>> getTasksByDate(Date date){
         Calendar c = Calendar.getInstance();
 
+        // Start date of the day
         c.setTime(date);
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
 
         Date startDate = c.getTime();
 
+        // End date of the day
         c.set(Calendar.HOUR_OF_DAY, 23);
         c.set(Calendar.MINUTE, 59);
 
@@ -47,6 +51,8 @@ public class TaskViewModel extends AndroidViewModel {
         return taskDao.getTasksBetweenDate(startDate, endDate);
     }
 
+    // Gets the current task (or previous if there is no task currently)
+    // on the current day
     public LiveData<Task> getCurrentTask(Date date){
         Calendar c = Calendar.getInstance();
         c.set(Calendar.HOUR_OF_DAY, 23);
@@ -57,10 +63,12 @@ public class TaskViewModel extends AndroidViewModel {
         return taskDao.getCurrentOrPrevTask(date, endOfDay);
     }
 
+    // First task ever created
     public LiveData<Task> getFirstTask() {
         return taskDao.getFirstTask();
     }
 
+    // Gets the number of completed tasks on a day
     public LiveData<Integer> getCompletedTaskCount(Date date) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -88,31 +96,9 @@ public class TaskViewModel extends AndroidViewModel {
         return taskDao.getNextTask(date, endOfDay);
     }
 
-    public LiveData<Task> getTaskAfter(Task task){
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, 23);
-        c.set(Calendar.MINUTE, 59);
-
-        Date endOfDay = c.getTime();
-
-        return taskDao.getNextTask(task.getEnd(), endOfDay);
-    }
-
     public LiveData<Integer> getProductiveHour(int hour){
         int hourOffset = TimeZone.getDefault().getOffset(new Date().getTime()) / 3600000;
         return taskDao.getProductiveHour(hour - hourOffset);
-    }
-
-//    public LiveData<Task> getNextTask(Date date){
-//        return taskDao.getNextTask(date);
-//    }
-//
-//    public ListenableFuture<Task> getTaskAfter(Task task) {
-//        return taskDao.getNextTask(task.getEnd());
-//    }
-
-    public ListenableFuture<Task> getTaskBefore(Task task) {
-        return taskDao.getPreviousTask(task.getStart());
     }
 
     public LiveData<List<Task>> getTasksBeforeDate(Date date){

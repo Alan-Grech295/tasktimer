@@ -140,7 +140,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Next Task"
+                android:text="@string/next_task"
                 android:textColor="@color/black"
                 android:textSize="24sp"
                 android:textStyle="bold"

@@ -17,19 +17,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.tasktimer.R;
 import com.example.tasktimer.database.viewmodels.TaskViewModel;
 import com.example.tasktimer.databinding.FragmentTimerBinding;
 import com.example.tasktimer.model.Task;
-import com.example.tasktimer.utils.FutureUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -80,10 +75,12 @@ public class TimerFragment extends Fragment {
 
         taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
 
+        // Sets the checkbox of the next task view to be unclickable
         CheckBox checkBox = root.findViewById(R.id.checkBox);
         checkBox.setFocusable(false);
         checkBox.setClickable(false);
 
+        // Calls update time every second
         updateTimeRunnable = new Runnable() {
             @Override
             public void run() {
@@ -170,6 +167,7 @@ public class TimerFragment extends Fragment {
 
         currentTaskLiveData.observe(getViewLifecycleOwner(), task -> {
             currentTask = task;
+            // Shows the no more tasks text if there are no more tasks left
             if(task == null){
                 mainHandler.post(() -> {
                     mainLayout.setVisibility(View.GONE);
@@ -191,6 +189,7 @@ public class TimerFragment extends Fragment {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
         int curMinute = c.get(Calendar.MINUTE);
+        // Checks for new tasks every minute (since that is the resolution of task time)
         if(curMinute != pastMinute){
             pastMinute = curMinute;
             getCurrentTask();
@@ -208,16 +207,20 @@ public class TimerFragment extends Fragment {
             timerProgress.setProgress(100);
             timerText.setText("");
 
+            // Time until the next task
             timeDiff = nextTask.getStart().getTime() - currentTime;
         }else{
             long taskStartTime = currentTask.getStart().getTime();
             long taskEndTime = currentTask.getEnd().getTime();
 
+            // If the current time is between the task start and end time
             if(currentTime >= taskStartTime && currentTime <= taskEndTime){
+                // Time until completion of the task
                 timeDiff = taskEndTime - taskStartTime;
                 timePassed = currentTime - taskStartTime;
             }else{
                 if(nextTask != null){
+                    // Time until the next task
                     timeDiff = nextTask.getStart().getTime() - taskEndTime;
                     timePassed = currentTime - taskEndTime;
                 }
@@ -232,6 +235,7 @@ public class TimerFragment extends Fragment {
         int minsLeft = Math.floorDiv(timeLeftS - (hoursLeft * 3600), 60);
         int secsLeft = timeLeftS % 60;
 
+        // Displays the timer time
         if(hoursLeft > 0){
             timerText.setText(String.format("%2s:%2s:%2s", hoursLeft, minsLeft, secsLeft).replace(' ', '0'));
         }else{
@@ -253,6 +257,7 @@ public class TimerFragment extends Fragment {
 
         long minsTillNext = 0;
 
+        // No tasks left
         if(currentTask == null){
             isBreak = true;
         }else {
@@ -263,11 +268,13 @@ public class TimerFragment extends Fragment {
             minsTillNext = (c.getTime().getTime() - currentTask.getEnd().getTime()) / (1000 * 60);
 
             if (currentTask.getEnd().getTime() >= new Date().getTime()) {
+                // Displays current task info
                 curTaskTitle.setText(currentTask.getTaskName());
                 String time = timeFormat.format(currentTask.getStart()) + " - " + timeFormat.format(currentTask.getEnd());
                 curTaskTime.setText(time);
                 endTaskButton.setEnabled(true);
             } else {
+                // Current task is completed
                 currentTask.setCompleted(true);
                 taskViewModel.update(currentTask);
                 endTaskButton.setEnabled(false);
@@ -296,17 +303,16 @@ public class TimerFragment extends Fragment {
             String time = timeFormat.format(nextTask.getStart()) + " - " + timeFormat.format(nextTask.getEnd());
             nextTimeText.setText(time);
             nextCompletedCheckbox.setChecked(nextTask.isCompleted());
-            nextDeleteButton.setOnClickListener(v -> {
-                taskViewModel.delete(nextTask);
-            });
 
             if(currentTask != null){
                 minsTillNext = (nextTask.getStart().getTime() - currentTask.getEnd().getTime()) / (1000 * 60);
             }
         }else{
+            // Hides next task if no next task exists
             nextTaskLayout.setVisibility(View.INVISIBLE);
         }
 
+        // Only allows adding time if there is 5 or more minutes between tasks
         addTimeButton.setEnabled(!isBreak && minsTillNext >= 5);
 
         updateTime();

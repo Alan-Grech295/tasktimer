@@ -13,12 +13,4 @@ public class Utils {
         return cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
                 cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
     }
-
-    public static long toUTCMillis(Date date){
-        long ms = date.getTime();
-
-        int offset = TimeZone.getDefault().getOffset(ms);
-
-        return ms - offset;
-    }
 }

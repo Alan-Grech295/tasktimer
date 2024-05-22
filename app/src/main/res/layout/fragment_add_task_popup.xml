@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".ui.AddTaskPopup"
     android:id="@+id/popupContainer"
     android:padding="20dp">
 
@@ -20,7 +19,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Task Name"
+            android:text="@string/task_title_input"
             android:textColor="@color/black" />
 
         <EditText
@@ -28,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="8"
-            android:hint="Enter task name"
+            android:hint="@string/task_title_input_placeholder"
             android:inputType="text"
             android:textSize="16sp" />
 
@@ -39,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:text="Add Task"
+        android:text="@string/add_task_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout7" />
 
@@ -48,7 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
-        android:text="Cancel"
+        android:text="@string/cancel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout7" />
 
@@ -72,7 +71,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Task Date"
+                android:text="@string/task_date_input_text"
                 android:textColor="@color/black" />
 
             <EditText
@@ -83,7 +82,7 @@
                 android:cursorVisible="false"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:hint="Pick a date"
+                android:hint="@string/task_date_placeholder"
                 android:inputType="date"
                 android:textSize="16sp" />
 
@@ -101,7 +100,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Task Start Time"
+                android:text="@string/task_start_time_text"
                 android:textColor="@color/black" />
 
             <EditText
@@ -113,7 +112,7 @@
                 android:ems="8"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:hint="Pick a time"
+                android:hint="@string/task_time_placeholder"
                 android:inputType="time"
                 android:textSize="16sp" />
 
@@ -131,7 +130,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Task End Time"
+                android:text="@string/task_end_time_text"
                 android:textColor="@color/black" />
 
             <EditText
@@ -143,7 +142,7 @@
                 android:ems="8"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:hint="Pick a time"
+                android:hint="@string/task_time_placeholder"
                 android:inputType="time"
                 android:textSize="16sp" />
 

@@ -37,6 +37,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
 
+// Displays the user's calendars
 public class ChooseCalendarPopup extends DialogFragment {
     String[] calendars;
     Calendar_RecyclerViewAdapter.OnCalendarChosen calendarChosenCallback;
@@ -74,6 +75,7 @@ public class ChooseCalendarPopup extends DialogFragment {
     public void onStart() {
         super.onStart();
 
+        // Sets the height of the popup to be 50% of the screen height
         WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
         params.height = (int) (getResources().getDisplayMetrics().heightPixels * 0.5);
         getDialog().getWindow().setAttributes(params);

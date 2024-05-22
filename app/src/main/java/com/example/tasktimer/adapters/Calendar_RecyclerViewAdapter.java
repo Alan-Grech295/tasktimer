@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+// Recycler view adapter for displaying the user's calendars
 public class Calendar_RecyclerViewAdapter extends RecyclerView.Adapter<Calendar_RecyclerViewAdapter.ViewHolder> {
     private String[] calendarNames;
     private Context context;

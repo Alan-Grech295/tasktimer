@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey;
 
 import java.util.Date;
 
+// Task data model
 @Entity(tableName = Task.TABLE_NAME)
 public class Task {
     public static final String TABLE_NAME = "tasks";

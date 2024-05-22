@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+// Recycler view adapter for displaying the user's tasks
 public class Task_RecyclerViewAdapter extends RecyclerView.Adapter<Task_RecyclerViewAdapter.ViewHolder> {
 
     private List<Task> tasks;
@@ -51,10 +52,12 @@ public class Task_RecyclerViewAdapter extends RecyclerView.Adapter<Task_Recycler
     public void onBindViewHolder(@NonNull Task_RecyclerViewAdapter.ViewHolder holder, int position) {
         Task curTask = tasks.get(position);
 
+        // Formats the date to the given format
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         DateFormat timeFormat = new SimpleDateFormat(TIME_FORMAT);
 
         holder.taskTitle.setText(curTask.getTaskName());
+        // Strikethrough title text if the task is completed
         if(curTask.isCompleted())
             holder.taskTitle.setPaintFlags(holder.taskTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         else
@@ -74,12 +77,12 @@ public class Task_RecyclerViewAdapter extends RecyclerView.Adapter<Task_Recycler
                     case DialogInterface.BUTTON_POSITIVE:
                         taskViewModel.delete(curTask);
                         break;
-
                     case DialogInterface.BUTTON_NEGATIVE:
                         break;
                 }
             };
 
+            // Displays a confirmation modal
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setMessage("Are you sure you want to delete the task '" + curTask.getTaskName() + "'?")
                             .setPositiveButton("Yes", dialogClickListener)

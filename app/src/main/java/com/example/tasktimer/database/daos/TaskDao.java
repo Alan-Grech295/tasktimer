@@ -17,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 
 import io.reactivex.rxjava3.core.Single;
 
+// Data access object to access tasks from the database
 @Dao
 public interface TaskDao {
     @Query("SELECT * FROM " + Task.TABLE_NAME + " ORDER BY start")

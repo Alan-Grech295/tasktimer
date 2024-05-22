@@ -39,14 +39,10 @@ public class CalendarHelper {
         }
 
         ContentValues event = new ContentValues();
+        // Calendar event data
         event.put(CalendarContract.Events.CALENDAR_ID, calendarId); // "" for insert
         event.put(CalendarContract.Events.TITLE, title);
-//        event.put(CalendarContract.Events.DESCRIPTION, "");
-//        event.put(CalendarContract.Events.EVENT_LOCATION, "");
-//        event.put(CalendarContract.Events.ALL_DAY, 0);
-//        event.put(CalendarContract.Events.STATUS, 1);
         event.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().toString());
-//        event.put("transparency", 0);
         event.put(CalendarContract.Events.DTSTART, startTime.getTime());
         event.put(CalendarContract.Events.DTEND, endTime.getTime());
 
@@ -71,6 +67,7 @@ public class CalendarHelper {
         return contentResolver.delete(Uri.parse(eventURI), null, null);
     }
 
+    // Gets the user's calendars
     public static CalendarData[] getCalendars(Context c) {
 
         String[] projection = {"_id", "calendar_displayName"};

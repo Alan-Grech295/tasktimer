@@ -83,6 +83,7 @@ public class AnalyticsFragment extends Fragment {
         bindCompletedTasks();
     }
 
+    //
     private void bindCompletedTasks() {
         taskViewModel.getFirstTask().observe(getViewLifecycleOwner(), task -> {
             Date taskStart = new Date();
@@ -93,13 +94,16 @@ public class AnalyticsFragment extends Fragment {
 
             bindTasksFromDate(taskStart);
 
+            // Sets the data for the line graph
             LineDataSet dataSet = new LineDataSet(completedTasksData, "Completed Tasks");
             LineData lineData = new LineData(dataSet);
             tasksCompletedChart.setData(lineData);
 
             XAxis xAxis = tasksCompletedChart.getXAxis();
+            // Aligns the x axis to the bottom
             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
             xAxis.setGranularity(2);
+            // Shows the date in the x axis
             xAxis.setValueFormatter(new IndexAxisValueFormatter(){
                 @Override
                 public String getFormattedValue(float value) {
@@ -117,6 +121,7 @@ public class AnalyticsFragment extends Fragment {
         });
     }
 
+    // Binds the tasks from a given date
     private void bindTasksFromDate(Date startDate) {
         completedTasksLiveData.forEach(liveData -> liveData.removeObservers(getViewLifecycleOwner()));
 
@@ -147,6 +152,7 @@ public class AnalyticsFragment extends Fragment {
             taskCountLiveData.observe(getViewLifecycleOwner(), count -> {
                 entry.setY(count);
 
+                // Updates the data entry when the task data changes
                 LineDataSet set = (LineDataSet)tasksCompletedChart.getData().getDataSetByIndex(0);
                 set.setValues(completedTasksData);
                 set.setColors(new int[] {R.color.primary}, getContext());
@@ -160,6 +166,7 @@ public class AnalyticsFragment extends Fragment {
                 }
             });
 
+            // Increments the checked date by a day
             startDate.setTime(startDate.getTime() + DAY_IN_MS);
             index++;
         }
@@ -169,6 +176,7 @@ public class AnalyticsFragment extends Fragment {
         for(int i = 0; i < 24; i++){
             BarEntry entry = new BarEntry(i, 0);
             productiveHoursData.add(entry);
+            // Updates the bar chart data when the task data changes
             taskViewModel.getProductiveHour(i).observe(getViewLifecycleOwner(), (count) -> {
                 entry.setY(count);
 
@@ -180,12 +188,14 @@ public class AnalyticsFragment extends Fragment {
             });
         }
 
+        // Sets the bar chart data
         BarDataSet dataSet = new BarDataSet(productiveHoursData, "Productive Hours");
         dataSet.setColors(new int[] {R.color.primary}, getContext());
         BarData barData = new BarData(dataSet);
         productiveHoursChart.setData(barData);
 
         XAxis xAxis = productiveHoursChart.getXAxis();
+        // Aligns x axis to the bottom
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1f);
 

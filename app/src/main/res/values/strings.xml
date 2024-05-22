@@ -6,4 +6,23 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="calendar_import">Import from Calendar…</string>
     <string name="calendar_export">Export to Calendar…</string>
+
+    <string name="task_title_input">Task Name</string>
+    <string name="task_title_input_placeholder">Enter task Name</string>
+    <string name="add_task_button">Add Task</string>
+    <string name="cancel">Cancel</string>
+    <string name="task_date_input_text">Task Date</string>
+    <string name="task_date_placeholder">Pick a date</string>
+    <string name="task_start_time_text">Task Start Time</string>
+    <string name="task_time_placeholder">Pick a time</string>
+    <string name="task_end_time_text">Task End Time</string>
+    <string name="tasks_completed_today">Tasks Completed Today:</string>
+    <string name="tasks_completed_graph_title">Tasks Completed</string>
+    <string name="productive_hours_graph_title">Productive Hours</string>
+    <string name="past_tasks_section_title">Past Tasks</string>
+    <string name="current_tasks_section_title">Current Tasks</string>
+    <string name="future_tasks_section_title">Future Tasks</string>
+    <string name="next_task">Next Task</string>
+    <string name="no_tasks_text">Hooray! You have no more tasks left for today!</string>
+    <string name="add_task_hint_text">Go to the \'Tasks\' tab to add a new task</string>
 </resources>
