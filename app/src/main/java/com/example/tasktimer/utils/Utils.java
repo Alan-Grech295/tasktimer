@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class Utils {
+    // Checks if two dates are on the same day
     public static boolean onSameDay(Date date1, Date date2){
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
